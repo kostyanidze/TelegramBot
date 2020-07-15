@@ -1,10 +1,8 @@
 import telebot
 from telebot.types import Message
 from telebot import types
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import config
 import requests
-import pyowm
 from datetime import datetime
 from pyowm.utils.config import get_default_config
 from pyowm.owm import OWM
@@ -15,17 +13,17 @@ s_city = ""
 city_id = 0
 config_dict = get_default_config()
 config_dict['language'] = 'ru'
-owm = OWM(appid,config_dict)
+owm = OWM(appid, config_dict)
 
 def get_wind_direction(deg):
-    l = ['Север ','Северо-Восток',' Восток','Юго-Восток','Юг ','Юго-Запад',' Запад','Северо-Запад']
-    for i in range(0,8):
+    l = ['Север ', 'Северо-Восток', ' Восток', 'Юго-Восток', 'Юг ', 'Юго-Запад', ' Запад', 'Северо-Запад']
+    for i in range(0, 8):
         step = 45.
         min = i*step - 45/2.
         max = i*step + 45/2.
         if i == 0 and deg > 360-45/2.:
             deg = deg - 360
-        if deg >= min and deg <= max:
+        if min <= deg <= max:
             res = l[i]
             break
     return res
@@ -38,7 +36,7 @@ def start(message: Message):
     btn3 = types.KeyboardButton('Восход и закат')
     markup.add(btn1, btn2, btn3)
     send_mess = f"<b>Привет {message.from_user.first_name}</b>! \nПривет! Это бот который показывает некоторые данные о погоде в выбранном городе! Введи команду /help чтобы узнать больше!"
-    bot.send_message(message.chat.id, send_mess,parse_mode='html',reply_markup=markup)
+    bot.send_message(message.chat.id, send_mess, parse_mode='html', reply_markup=markup)
 
 
 @bot.message_handler(commands=['help'])
@@ -91,7 +89,7 @@ def prognoz(message: Message):
         res = requests.get("http://api.openweathermap.org/data/2.5/forecast",
                            params={'id': city_id, 'units': 'metric', 'lang': 'ru', 'APPID': appid})
         data = res.json()
-        str='city:', data['city']['name'], data['city']['country']
+        str = 'city:', data['city']['name'], data['city']['country']
         for i in data['list']:
             str = ""
             if '15:00' in (i['dt_txt'])[:16]:
