@@ -113,6 +113,8 @@ def text_handler(message: Message):
         prognoz(message)
     elif 'Восход и закат' in message.text:
         sunrise_and_sunset(message)
+    elif '/' in message.text:
+        bot.send_message(message.chat.id, text="Такая команда не поддерживается!")
     else:
         try:
             global s_city
